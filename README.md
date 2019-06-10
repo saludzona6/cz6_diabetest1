@@ -6,6 +6,10 @@ REST Api
 GraphQL 
 Vuetify
 
+![Alt text](src/assets/screen1.png?raw=true "Screen1")
+
+![Alt text](src/assets/screen2.png?raw=true "Screen2")
+
 ## Back-End Strapi Setup
 
 From [Strapi.io](https://strapi.io/getting-started)

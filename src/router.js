@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import store from './store/store.js'
-import Home from './views/Home.vue'
+import Home from '@/components/Home.vue'
 import LoginComponent from '@/components/auth/LoginComponent'
 import DashboardComponent from '@/components/private/dashboard/DashboardComponent'
 
