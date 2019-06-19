@@ -913,7 +913,7 @@ import axios from "axios"
 import { validationMixin } from 'vuelidate'
 import { required,  minLength, maxLength} from 'vuelidate/lib/validators'
 import Strapi from 'strapi-sdk-javascript/build/main'
-const apiUrl = process.env.API_URL || 'http://localhost:1337'
+const apiUrl = process.env.VUE_APP_API_URL || 'http://localhost:1337'
 const strapi = new Strapi(apiUrl)
 
 const OBJ= {

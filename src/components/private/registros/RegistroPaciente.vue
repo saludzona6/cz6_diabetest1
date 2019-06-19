@@ -62,7 +62,7 @@
     import EntregaKit from "@/components/private/registros/timeline/EntregaKit"
     import Subsecuente from "@/components/private/registros/timeline/Subsecuente"
     import { setTimeout } from 'timers';
-    const apiUrl = process.env.API_URL || 'http://localhost:1337'
+    const apiUrl = process.env.VUE_APP_API_URL || 'http://localhost:1337'
     const strapi = new Strapi(apiUrl)
     export default {
         props: {

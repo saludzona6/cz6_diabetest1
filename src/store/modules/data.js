@@ -1,7 +1,7 @@
 import { DATA_REQUEST, DATA_ERROR, DATA_SUCCESS } from '../actions/data'
 
 import Strapi from 'strapi-sdk-javascript';
-const apiUrl = process.env.API_URL || 'http://localhost:1337'
+const apiUrl = process.env.VUE_APP_API_URL || 'http://localhost:1337'
 const strapi = new Strapi(apiUrl)
 
 const state = { data: {} }

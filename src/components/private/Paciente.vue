@@ -16,6 +16,9 @@
       </v-breadcrumbs>    -->
       <v-layout  justify-center mt-2 v-if="paciente">
         <v-flex xs12 md12 ma-1 transition="scale-transition">
+                <v-btn round color="primary" dark>PRUEBAs</v-btn>
+
+
           <v-toolbar dark color="cyan darken-3" >
               <v-btn icon to="/dashboard">
                 <v-icon>keyboard_backspace</v-icon>
@@ -153,7 +156,7 @@
 import RegistroPaciente from "@/components/private/registros/RegistroPaciente"
 import NuevoPacienteFrm from "@/components/private/NuevoPaciente/NuevoPacienteFrm"
 import Strapi from 'strapi-sdk-javascript';
-const apiUrl = process.env.API_URL || 'http://localhost:1337'
+const apiUrl = process.env.VUE_APP_API_URL || 'http://localhost:1337'
 const strapi = new Strapi(apiUrl)
 
 export default {

@@ -3,7 +3,7 @@ import { USER_REQUEST } from '../actions/user'
 import { DATA_REQUEST } from '../actions/data'
 import axios from 'axios';
 import Strapi from 'strapi-sdk-javascript';
-const apiUrl = process.env.API_URL || 'http://localhost:1337'
+const apiUrl = process.env.VUE_APP_API_URL || 'http://localhost:1337'
 const strapi = new Strapi(apiUrl)
 const state = { token: localStorage.getItem('user-token') || '', status: '', hasLoadedOnce: false }
 
@@ -15,6 +15,8 @@ const getters = {
 const actions = {
   [AUTH_REQUEST]: ({commit, dispatch}, user) => {
     return new Promise((resolve, reject) => {
+      console.log("VUE_APP_API_URL")
+      console.log(process.env.VUE_APP_API_URL)
       commit(AUTH_REQUEST)
       const response =  strapi.login(
         user.identifier,

@@ -4,8 +4,8 @@ import { USER_REQUEST, USER_ERROR, USER_SUCCESS } from '../actions/user'
 import { AUTH_LOGOUT } from '../actions/auth'
 import axios from 'axios';
 import Strapi from 'strapi-sdk-javascript';
-const apiUrl = process.env.API_URL || 'http://localhost:1337'
-const strapi = new Strapi(apiUrl)
+const apiUrl = process.env.VUE_APP_API_URL || 'http://localhost:1337'
+
 
 const state = { status: '', profile: {} }
 
@@ -19,7 +19,7 @@ const actions = {
     commit(USER_REQUEST)
     //const userId=payload.userId;
     axios
-    .get('http://localhost:1337/users/me')
+    .get(apiUrl+'/users/me')
     .then(response => {
       console.log(response) 
       commit(USER_SUCCESS, response)
