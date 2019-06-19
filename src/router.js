@@ -4,6 +4,8 @@ import store from './store/store.js'
 import Home from '@/components/Home.vue'
 import LoginComponent from '@/components/auth/LoginComponent'
 import DashboardComponent from '@/components/private/dashboard/DashboardComponent'
+import Paciente from '@/components/private/Paciente'
+import RegistroDetail from '@/components/private/registros/RegistroDetail'
 
 Vue.use(Router)
 
@@ -39,7 +41,22 @@ export default new Router({
       name: 'dashboard',
       beforeEnter: ifAuthenticated,
       component: DashboardComponent
+    },
+    {
+      path: '/paciente/:id',
+      name: 'Paciente',
+      component: Paciente,
+      props: true,
+      beforeEnter: ifAuthenticated,
+    },
+    {
+      path: '/registro/:id',
+      name: 'Registro',
+      component: RegistroDetail,
+      props: true,
+      beforeEnter: ifAuthenticated,
     }
+
 
   ]
 })

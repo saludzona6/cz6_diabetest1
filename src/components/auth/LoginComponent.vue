@@ -54,8 +54,8 @@
     name: 'login',
     data () {
       return {
-        identifier: '',
-        password: '',
+        identifier: 'javier.garcia',
+        password: '123456',
         loading: false,
         valid: false,
         error:false

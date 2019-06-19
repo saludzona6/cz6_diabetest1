@@ -1,5 +1,6 @@
 import { AUTH_REQUEST, AUTH_ERROR, AUTH_SUCCESS, AUTH_LOGOUT } from '../actions/auth'
 import { USER_REQUEST } from '../actions/user'
+import { DATA_REQUEST } from '../actions/data'
 import axios from 'axios';
 import Strapi from 'strapi-sdk-javascript';
 const apiUrl = process.env.API_URL || 'http://localhost:1337'
@@ -25,6 +26,7 @@ const actions = {
         axios.defaults.headers.common['Authorization'] = 'Bearer '+token
         commit(AUTH_SUCCESS, response)
         dispatch(USER_REQUEST)
+        dispatch(DATA_REQUEST)
         resolve(response)
  
       }).catch(error => {
