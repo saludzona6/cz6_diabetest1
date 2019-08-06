@@ -68,14 +68,22 @@
                   ></v-text-field>
 
                   <v-text-field
-                    label="Apellidos"
-                    v-model="frmObj.apellidos"
+                    label="Apellido Paterno *"
+                    v-model="frmObj.apellido_paterno"
                     required
-                    @blur="$v.frmObj.apellidos.$touch()"
-                    :error-messages="apellidosErrors"
+                    @blur="$v.frmObj.apellido_paterno.$touch()"
+                    :error-messages="apellidoPaternoErrors"
                     :disabled="action=='delete' || loading"
                   ></v-text-field>
                   
+                    <v-text-field
+                    label="Apellido Materno *"
+                    v-model="frmObj.apellido_materno"
+                    required
+                    @blur="$v.frmObj.apellido_materno.$touch()"
+                    :error-messages="apellidoMaternoErrors"
+                    :disabled="action=='delete' || loading"
+                  ></v-text-field>
 
                   <v-text-field
                     label="Cedula / Pasaporte"
@@ -148,7 +156,7 @@
                   ></v-text-field>
 
                   <v-text-field
-                    label="Tutor"
+                    label="Tutor legal/Padre/Madre"
                     v-model="frmObj.tutor"
                     required
                     :disabled="action=='delete' || loading"
@@ -159,16 +167,16 @@
                 <v-divider></v-divider>
                 
                 <v-card-text >
-                  <h3>Médico de Cabecera</h3>
+                  <h3>Médico Tratante</h3>
                   <v-text-field
-                    label="Médico de Cabecera"
+                    label="Nombre Médico Tratante"
                     v-model="frmObj.medico_cabecera"
                     required
                     :disabled="action=='delete' || loading"
                   ></v-text-field>
 
                   <v-text-field
-                    label="Contacto Médico de Cabecera"
+                    label="Contacto Médico Tratante (Celular)"
                     v-model="frmObj.contacto_medico_cabecera"
                     required
                     :disabled="action=='delete' || loading"
@@ -190,7 +198,7 @@
                   ></v-text-field>
 
                   <v-menu
-                    ref="menu2"
+                    ref="menu"
                     :close-on-content-click="false"
                     :nudge-right="40"
                     lazy
@@ -208,10 +216,10 @@
                         v-on="on"
                       ></v-text-field>
                     </template>
-                    <v-date-picker v-model="frmObj.fecha_debut" no-title scrollable>
+                    <v-date-picker v-model="date" type="month" no-title scrollable>
                       <v-spacer></v-spacer>
-                      <v-btn flat color="primary" @click="menu2 = false">Cancel</v-btn>
-                      <v-btn flat color="primary" @click="$refs.menu2.save(date)">OK</v-btn>
+                      <v-btn flat color="primary" @click="menu = false">Cancel</v-btn>
+                      <v-btn flat color="primary" @click="$refs.menu.save(date)">OK</v-btn>
                     </v-date-picker>
                   </v-menu>
 
@@ -232,36 +240,65 @@
                   ></v-text-field>
 
                   <v-text-field
-                    label="HB1AC Debut"
+                    label="% HB1AC (0-20)"
                     v-model="frmObj.hb1Ac_debut"
                     required
                     :disabled="action=='delete' || loading"
                     type="number"
                   ></v-text-field>
-                  
-
-                </v-card-text>
+                  </v-card-text>
                 
                 <v-divider></v-divider>
                 
                 <v-card-text >
-                  <h3>Datos Adicionales</h3>
+                  <h3>Antecedentes Personales</h3>
 
-                  <v-textarea
-                    v-model="frmObj.complicaciones"
-                    auto-grow
-                    box
-                    color="deep-purple"
+                  <v-select
+                    :items="complicacionItems"
                     label="Complicaciones"
-                    rows="2"
-                  ></v-textarea>
+                    v-model="frmObj.complicacionItems"
+                  ></v-select>
+
+                  <v-text-field
+                    label="Número de Crisis"
+                    v-model="frmObj.num_crisis"
+                    required
+                    :disabled="action=='delete' || loading"
+                    type="number"
+                  ></v-text-field>
+
+                  <v-menu
+                    ref="menu"
+                    :close-on-content-click="false"
+                    :nudge-right="40"
+                    lazy
+                    transition="scale-transition"
+                    offset-y
+                    full-width
+                    min-width="290px"
+                  >
+                    <template v-slot:activator="{ on }">
+                      <v-text-field
+                        v-model="computedFechaCrisis"
+                        label="Fecha de ultima crisis"
+                        prepend-icon="event"
+                        readonly
+                        v-on="on"
+                      ></v-text-field>
+                    </template>
+                    <v-date-picker v-model="frmObj.ultima_crisis" no-title scrollable>
+                      <v-spacer></v-spacer>
+                      <v-btn flat color="primary" @click="menu = false">Cancel</v-btn>
+                      <v-btn flat color="primary" @click="$refs.menu.save(date)">OK</v-btn>
+                    </v-date-picker>
+                  </v-menu>
 
                   <v-textarea
                     v-model="frmObj.comorbilidad"
                     auto-grow
                     box
                     color="deep-purple"
-                    label="Comorbilidad"
+                    label="Otras Comorbilidades"
                     rows="2"
                   ></v-textarea>
 
@@ -270,7 +307,7 @@
                     auto-grow
                     box
                     color="deep-purple"
-                    label="Obbservaciones"
+                    label="Observaciones"
                     rows="2"
                   ></v-textarea>
 
@@ -323,7 +360,8 @@ const strapi = new Strapi(apiUrl)
 
 const OBJ= {
   nombres: "",
-  apellidos: "",
+  apellido_paterno: "",
+  apellido_materno: "",
   identificacion:"",
   establecimiento:null,
   fecha_nacimiento:new Date().toISOString().substr(0, 10),
@@ -367,7 +405,8 @@ export default {
   validations: {
     frmObj:{
       nombres:{required},
-      apellidos:{required},
+      apellido_paterno:{required},
+      apellido_materno:{required},
       identificacion:{required}
     }
   },
@@ -473,11 +512,17 @@ export default {
       else
         return  new Date().toISOString().substr(0, 10)
     },
-    computedFechaDebutFormatted(){
-      if(this.frmObj.fecha_debut)
-        return new Date(this.frmObj.fecha_debut).toISOString().substr(0, 10)
+    computedFechaCrisis(){
+      if(this.frmObj.fecha_crisis)
+        return new Date(this.frmObj.fecha_nacimiento).toISOString().substr(0, 10)
       else
         return  new Date().toISOString().substr(0, 10)
+    },
+    computedFechaDebutFormatted(){
+      if(this.frmObj.fecha_debut)
+        return new Date(this.frmObj.fecha_debut).toISOString().substr(0, 7)
+      else
+        return new Date().toISOString().substr(0, 7)
     },
     nombresErrors () {
       const errors = []
@@ -485,12 +530,19 @@ export default {
       !this.$v.frmObj.nombres.required && errors.push('Nombres es requerido')
       return errors
     },
-    apellidosErrors () {
+    apellidoPaternoErrors () {
       const errors = []
-      if (!this.$v.frmObj.apellidos.$dirty) return errors
-      !this.$v.frmObj.apellidos.required && errors.push('Apellidos es requerido')
+      if (!this.$v.frmObj.apellido_paterno.$dirty) return errors
+      !this.$v.frmObj.apellido_paterno.required && errors.push('Apellido paterno es requerido')
       return errors
     },
+    apellidoMaternoErrors () {
+      const errors = []
+      if (!this.$v.frmObj.apellido_materno.$dirty) return errors
+      !this.$v.frmObj.apellido_materno.required && errors.push('Apellido materno es requerido')
+      return errors
+    },
+
     identificacionErrors () {
       const errors = []
       if (!this.$v.frmObj.identificacion.$dirty) return errors

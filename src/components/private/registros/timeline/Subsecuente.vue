@@ -1,6 +1,6 @@
 <template>
     <v-timeline-item
-        color="teal lighten-3"
+        color="green"
         small
         >
         <v-layout pt-3>
@@ -14,10 +14,10 @@
             </v-flex>
             <v-flex>
                 <div class="text-xs-center">
-                    <v-chip outline color="teal lighten-1" > <strong>HB1AC::{{registro.reg_valor_hb1ac}}</strong></v-chip>
+                    <v-chip outline color="teal lighten-1" > <strong>HB1AC:{{registro.reg_valor_hb1ac}}</strong></v-chip>
                 </div>    
                 <div v-if="registro.reg_fondo_ojo=='SI'">Fondo Ojo: {{registro.reg_fondo_ojo}}</div>  
-                <div>Hipoglucmias x Semana: {{registro.reg_hipoglucemias_semana}}</div>  
+                <div>Hipoglucemias x Semana: {{registro.reg_hipoglucemias_semana}}</div>  
                 <div>Glaucemias x Día: {{registro.reg_num_glaucemias_dia}}</div>  
                 <div>Lipodistrofia: {{registro.reg_lipodistrofia}}</div>  
                 <template v-if="registro.reg_cie10s.length>0">

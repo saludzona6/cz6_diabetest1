@@ -20,7 +20,7 @@
               <v-btn icon :to="'/paciente/'+paciente.id">
                 <v-icon>keyboard_backspace</v-icon>
               </v-btn>
-              <v-toolbar-title> {{paciente.apellidos}}, {{paciente.nombres}} (CI: {{paciente.identificacion}})</v-toolbar-title>
+              <v-toolbar-title> {{paciente.apellido_paterno}} {{paciente.apellido_materno}}, {{paciente.nombres}} (CI: {{paciente.identificacion}})</v-toolbar-title>
   
           </v-toolbar>
           <v-tabs
@@ -32,7 +32,7 @@
                 key=0        
                 ripple
             >
-                Deralle Registro 
+                Detalle Registro 
             </v-tab>
             <v-tab-item
                 key="0"
@@ -58,6 +58,8 @@
                                 <v-divider></v-divider>
                                 <h4 class=""><span class="category font-weight-regular mb-3">Glaucemias Capilares x Día:</span> {{ registro.reg_num_glaucemias_dia }}</h4>
                                 <h4 class=""><span class="category font-weight-regular mb-3">Presenta Lipodistrofia:</span> {{ registro.reg_lipodistrofia }}</h4>
+                                <h4 class=""><span class="category font-weight-regular mb-3">Presenta Lipohipertrofia:</span> {{ registro.reg_lipohipertrofia_zona }}</h4>
+                                <h4 class=""><span class="category font-weight-regular mb-3">Presion Arterial:</span> {{ registro.reg_presion_arterial }}</h4>
                                 <br>
                                 <h3>GLUCAGON</h3>
                                 <v-divider></v-divider>
@@ -89,7 +91,7 @@
                                 <h4 class="">
                                     <span class="category font-weight-regular mb-3">Control Médico:</span> {{ registro.reg_control_medico }}
                                     <span class="caption" v-if="registro.reg_control_medico=='SI'">
-                                       ({{ formato(registro.reg_control_medico_fecha) }})
+                                       ({{ formato(registro.reg_control_medico_fecha) }} {{registro.reg_control_medico_especialista}})
                                     </span>
                                 </h4>
                                 <h4 class="">
@@ -113,6 +115,7 @@
                                        ({{ formato(registro.reg_taller_nutricion_fecha) }})
                                     </span>
                                 </h4>
+                                <h4 class=""><span class="category font-weight-regular mb-3">Club de Diabetes:</span> {{ registro.reg_club_diabetes }}</h4>
                                 <br>
                                 <h3>Actividad Física</h3>
                                 <v-divider></v-divider>
@@ -153,8 +156,11 @@
                             <v-flex xs12 mt-3>
                                 <h2>Perfil Analítico</h2>
                                 <v-divider></v-divider>
-                                <h4 class=""><span class="category font-weight-regular mb-3">Fecha ültimo Perfil:</span> {{ formato(registro.reg_fecha_perfil_analitico) }}</h4>  
+                                <h4 class=""><span class="category font-weight-regular mb-3">Fecha último Perfil:</span> {{ formato(registro.reg_fecha_perfil_analitico) }}</h4>  
                                 <h4 class=""><span class="category font-weight-regular mb-3">Número de Hipoglucemias por Semana:</span> {{ registro.reg_hipoglucemias_semana }}</h4>  
+                                <h4 class=""><span class="category font-weight-regular mb-3">Número de Hiperglicemias por Semana:</span> {{ registro.reg_hiperglicemias_semana }}</h4>  
+                                <h4 class=""><span class="category font-weight-regular mb-3">Hiperglucemias Prandiales:</span> {{ registro.reg_hiperglucemia_prandiales }}</h4>  
+                                <h4 class=""><span class="category font-weight-regular mb-3">Hiperglucemias Postprandiales:</span> {{ registro.reg_hiperglucemia_postprandiales }}</h4>  
                                 <h4 class="">
                                     <span class="category font-weight-regular mb-3">Items Perfil:</span> 
                                     <v-chip outline color="success" v-bind:key="c.id" v-for="c in registro.reg_perfilanaliticos"> {{c.nombre}}</v-chip>
@@ -222,12 +228,12 @@
                                 <h4 class=""><span class="category font-weight-regular mb-3">Residencia:</span>  {{ paciente.provincia_residencia.nombre }} / {{paciente.ciudad_residencia}}</h4>
                                 <h4 class=""><span class="category font-weight-regular mb-3">Dirección:</span> {{ paciente.direccion }}</h4>
                                 <h4 class=""><span class="category font-weight-regular mb-3">Teléfono Contacto:</span> {{ paciente.telefono }}</h4>
-                                <h4 class=""><span class="category font-weight-regular mb-3">Tutor:</span> {{ paciente.tutor }}</h4>
+                                <h4 class=""><span class="category font-weight-regular mb-3">Tutor legal/Padre/Madre:</span> {{ paciente.tutor }}</h4>
                                 <v-spacer></v-spacer>
                                 <br>
-                                <h3>Médico de Cabecera</h3>
+                                <h3>Médico Tratante</h3>
                                 <v-divider></v-divider>
-                                <h4 class=""><span class="category font-weight-regular mb-3">Médico Cabecera:</span> {{ paciente.medico_cabecera }}</h4>
+                                <h4 class=""><span class="category font-weight-regular mb-3">Médico Tratante:</span> {{ paciente.medico_cabecera }}</h4>
                                 <h4 class=""><span class="category font-weight-regular mb-3">Contacto:</span> {{ paciente.contacto_medico_cabecera }}</h4>
 
                             </v-flex>
@@ -327,6 +333,7 @@ export default {
         return  new Date().toISOString().substr(0, 10)
     },
   },
+  
   methods: {
     editPaciente(vObj){
         this.selectedObj=vObj;
@@ -362,10 +369,12 @@ export default {
                         reg_control_nutricional_fecha
                         reg_control_medico
                         reg_control_medico_fecha
+                        reg_control_medico_especialista
                         reg_taller_educacion
                         reg_taller_educacion_fecha
                         reg_taller_nutricion
                         reg_taller_nutricion_fecha
+                        reg_club_diabetes
                         reg_control_podologia
                         reg_control_podologia_fecha
                         reg_actividad_fisica
@@ -374,6 +383,9 @@ export default {
                         reg_actividad_duracion
                         reg_num_glaucemias_dia
                         reg_lipodistrofia
+                        reg_controlado
+                        reg_lipohipertrofia
+                        reg_lipohipertrofia_zona
                         reg_glucagon
                         reg_glucagon_fecha_entrega
                         reg_glucagon_fecha_vencimiento
@@ -381,7 +393,9 @@ export default {
                         reg_talla
                         reg_imc
                         reg_perimetro_abdominal
+                        eme_motivo
                         reg_tanner
+                        reg_tanner_escala
                         reg_fum
                         reg_menarca
                         reg_fecha_perfil_analitico
@@ -390,6 +404,10 @@ export default {
                             nombre
                         }
                         reg_hipoglucemias_semana
+                        reg_hiperglicemias_semana
+                        reg_hiperglucemia_prandiales
+                        reg_hiperglucemia_postprandiales
+                        reg_presion_arterial
                         reg_observaciones
                         kit_calibracion_glaucometro_fecha
                         kit_calibracion_glaucometro
@@ -416,7 +434,8 @@ export default {
                         paciente{
                                 id
                                 nombres
-                                apellidos
+                                apellido_paterno
+                                apellido_materno
                                 establecimiento{
                                     id
                                     nombre

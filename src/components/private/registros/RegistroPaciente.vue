@@ -14,7 +14,8 @@
                         <v-timeline align-top dense>
                             <template v-for="r in listRegistros">
                                <EntregaKit v-bind:key="r.id" v-bind:registro="r" v-if="r.tipo=='ENTREGA DE KIT'"></EntregaKit>  
-                               <Subsecuente v-bind:key="r.id" v-bind:registro="r" v-if="r.tipo!='ENTREGA DE KIT'"></Subsecuente>  
+                               <Subsecuente v-bind:key="r.id" v-bind:registro="r" v-if="r.tipo=='REGISTRO SUBSECUENTE'"></Subsecuente>  
+                               <Emergente v-bind:key="r.id" v-bind:registro="r" v-if="r.tipo=='REGISTRO EMERGENTE'"></Emergente>  
                                <v-divider v-bind:key="'d'+r.id"></v-divider>
                             </template>    
                         </v-timeline>
@@ -61,6 +62,7 @@
     import NuevoRegistroFrm from "@/components/private/registros/NuevoRegistroFrm"
     import EntregaKit from "@/components/private/registros/timeline/EntregaKit"
     import Subsecuente from "@/components/private/registros/timeline/Subsecuente"
+    import Emergente from "@/components/private/registros/timeline/Emergente"
     import { setTimeout } from 'timers';
     const apiUrl = process.env.VUE_APP_API_URL || 'http://localhost:1337'
     const strapi = new Strapi(apiUrl)
@@ -82,7 +84,8 @@
                 {
                     text: 'Paciente',
                     align: 'left',
-                    value: 'apellidos'
+                    value: 'apellido_paterno',
+                    value: 'apellido_materno'
                 },
                 { text: 'Cedula', value: 'identificacion' },
                 { text: 'Ciudad', value: 'ciudad_residencia' },
@@ -130,7 +133,8 @@
         },components:{
             NuevoRegistroFrm,
             EntregaKit,
-            Subsecuente
+            Subsecuente,
+            Emergente
         }
     }
 </script>

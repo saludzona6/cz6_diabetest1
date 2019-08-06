@@ -8,7 +8,7 @@
               <v-icon>close</v-icon>
             </v-btn>
             <v-toolbar-title v-if="obj && action=='edit'" >Editar {{title}}</v-toolbar-title>
-            <v-toolbar-title v-if="!obj" >Nuevo {{title}}: {{paciente.apellidos}}, {{paciente.nombres}} ({{paciente.identificacion}})</v-toolbar-title>
+            <v-toolbar-title v-if="!obj" >Nuevo {{title}}: {{paciente.apellido_paterno}} {{paciente.apellido_materno}}, {{paciente.nombres}} ({{paciente.identificacion}})</v-toolbar-title>
             <v-toolbar-title v-if="obj && action=='delete'" >Eliminar {{title}}</v-toolbar-title>
             <v-spacer></v-spacer>
             <v-toolbar-items>
@@ -48,7 +48,8 @@
                             ></v-select>
                         </v-flex>
                    </v-card-text>        
-               </v-card>                 
+               </v-card>      
+
               <v-card v-if="frmObj.tipo=='ENTREGA DE KIT'" >
                
                 <v-card-text >
@@ -83,8 +84,17 @@
                 </v-menu>
 
                 <v-text-field
-                    label="Número de Tirillas Entregadas por Día"
+                    label="Número de Tirillas Entregadas"
                     v-model="frmObj.kit_tirillas"
+                    required
+                    :disabled="action=='delete' || loading"
+                    type="number"
+                    outline
+                ></v-text-field>
+
+                <v-text-field
+                    label="Número de Controles diarios"
+                    v-model="frmObj.kit_controles"
                     required
                     :disabled="action=='delete' || loading"
                     type="number"
@@ -96,7 +106,7 @@
                 <v-select
                     v-model="frmObj.kit_entrega_glucagon"
                     :items="sinoItems"
-                    label="Se realizó entrega de Glaucón?"
+                    label="Se realizó entrega de Glucagon?"
                     outline
                 ></v-select>
 
@@ -131,7 +141,7 @@
                 <v-select
                     v-model="frmObj.kit_calibracion_glaucometro"
                     :items="sinoItems"
-                    label="Se realizó Calibración de Glaucómetro?"
+                    label="Se realizó Calibración de Glucómetro?"
                     outline
                 ></v-select>
 
@@ -149,7 +159,7 @@
                     <template v-slot:activator="{ on }">
                         <v-text-field
                         v-model="frmObj.kit_calibracion_glaucometro_fecha"
-                        label="Fecha de Calibración de Glaucómetro"
+                        label="Fecha de Calibración de Glucómetro"
                         prepend-icon="event"
                         readonly
                         v-on="on"
@@ -164,47 +174,13 @@
                 </v-menu>
                
               </v-card>
-              <v-card v-if="frmObj.tipo && frmObj.tipo!='ENTREGA DE KIT'" >
+              
+              <v-card v-if="frmObj.tipo=='REGISTRO SUBSECUENTE'" >
                 
                 <v-card-text >
                   <h3>Datos Principales</h3>
                 </v-card-text>
 
-                <v-text-field
-                    label="Valor de Hb1Ac (último control)"
-                    v-model="frmObj.reg_valor_hb1ac"
-                    required
-                    :disabled="action=='delete' || loading"
-                    type="number"
-                    outline
-                ></v-text-field>  
-
-                <v-menu
-                    ref="reg_fecha_hb1ac"
-                    :close-on-content-click="false"
-                    :nudge-right="40"
-                    lazy
-                    transition="scale-transition"
-                    offset-y
-                    full-width
-                    min-width="290px"
-                    >
-                    <template v-slot:activator="{ on }">
-                        <v-text-field
-                        v-model="frmObj.reg_fecha_hb1ac"
-                        label="Fecha último control Hb1Ac"
-                        prepend-icon="event"
-                        readonly
-                        v-on="on"
-                        outline
-                        ></v-text-field>
-                    </template>
-                    <v-date-picker v-model="frmObj.reg_fecha_hb1ac" no-title scrollable>
-                        <v-spacer></v-spacer>
-                        <v-btn flat color="primary" @click="reg_fecha_hb1ac = false">Cancel</v-btn>
-                        <v-btn flat color="primary" @click="$refs.reg_fecha_hb1ac.save(date)">OK</v-btn>
-                    </v-date-picker>
-                </v-menu>
 
 
                 <v-divider></v-divider> 
@@ -261,7 +237,7 @@
 
                 <v-divider></v-divider>
                 <v-card-text >
-                  <h3>Controles</h3>
+                  <h3>Controles Multidisciplinarios</h3>
                 </v-card-text>
                 <v-select
                     v-model="frmObj.reg_valoracion_psicologica"
@@ -368,6 +344,16 @@
                     </v-date-picker>
                 </v-menu>
 
+                <v-text-field
+                    v-if="frmObj.reg_control_medico =='SI'"
+                    label="Especialidad"
+                    v-model="frmObj.reg_control_medico_especialista"
+                    required
+                    :disabled="action=='delete' || loading"
+                    type="text"
+                    outline
+                ></v-text-field>
+
                 <v-select
                     v-model="frmObj.reg_control_podologia"
                     :items="sinoItems"
@@ -411,7 +397,7 @@
                 <v-select
                     v-model="frmObj.reg_taller_educacion"
                     :items="sinoItems"
-                    label="Ultimo Taller de Educación?"
+                    label="Taller de Educación?"
                     outline
                 ></v-select>
 
@@ -446,7 +432,7 @@
                 <v-select
                     v-model="frmObj.reg_taller_nutricion"
                     :items="sinoItems"
-                    label="Ultimo Taller de Nutrición?"
+                    label="Taller de Nutrición?"
                     outline
                 ></v-select>
 
@@ -478,7 +464,14 @@
                     </v-date-picker>
                 </v-menu>
 
-                <v-divider></v-divider>    
+                <v-select
+                    v-model="frmObj.reg_club_diabetes"
+                    :items="sinoItems"
+                    label="Pertenece al Club de Diabetes?"
+                    outline
+                ></v-select>
+
+                                <v-divider></v-divider>    
                 <v-card-text >
                   <h3>Actividad Física</h3>
                 </v-card-text>
@@ -602,7 +595,6 @@
                         </v-flex>
                     </v-layout>
                 </template>
-
                 
                 </div>           
 
@@ -612,7 +604,7 @@
                 </v-card-text>
 
                 <v-text-field 
-                    label="Número de Glucemias Capilares por Día"
+                    label="Número de Glucemias Capilares que realiza por día"
                     v-model="frmObj.reg_num_glaucemias_dia"
                     required
                     :disabled="action=='delete' || loading"
@@ -627,73 +619,29 @@
                     outline
                 ></v-select>
 
-                <v-divider></v-divider> 
-                <v-card-text >
-                  <h3>Datos Glucagón</h3>
-                </v-card-text>
-
                 <v-select
-                    v-model="frmObj.reg_glucagon"
+                    v-model="frmObj.reg_lipohipertrofia"
                     :items="sinoItems"
-                    label="Disponde de GLUCAGON?"
+                    label="Presenta Lipohipertrofia?"
                     outline
                 ></v-select>
 
-                <v-menu
-                    v-if="frmObj.reg_glucagon =='SI'"
-                    ref="reg_glucagon_fecha_entrega"
-                    :close-on-content-click="false"
-                    :nudge-right="40"
-                    lazy
-                    transition="scale-transition"
-                    offset-y
-                    full-width
-                    min-width="290px"
-                    >
-                    <template v-slot:activator="{ on }">
-                        <v-text-field
-                        v-model="frmObj.reg_glucagon_fecha_entrega"
-                        label="Fecha de Entrega de GLUCAGON"
-                        prepend-icon="event"
-                        readonly
-                        v-on="on"
-                        outline
-                        ></v-text-field>
-                    </template>
-                    <v-date-picker v-model="frmObj.reg_glucagon_fecha_entrega" no-title scrollable>
-                        <v-spacer></v-spacer>
-                        <v-btn flat color="primary" @click="reg_glucagon_fecha_entrega = false">Cancel</v-btn>
-                        <v-btn flat color="primary" @click="$refs.reg_glucagon_fecha_entrega.save(date)">OK</v-btn>
-                    </v-date-picker>
-                </v-menu>
+                <v-text-field v-if="frmObj.reg_lipohipertrofia=='SI'"
+                    label="Especificar Zona"
+                    v-model="frmObj.reg_lipohipertrofia_zona"
+                    required
+                    :disabled="action=='delete' || loading"
+                    outline
+                ></v-text-field> 
 
-                <v-menu
-                    v-if="frmObj.reg_glucagon =='SI'"
-                    ref="reg_glucagon_fecha_vencimiento"
-                    :close-on-content-click="false"
-                    :nudge-right="40"
-                    lazy
-                    transition="scale-transition"
-                    offset-y
-                    full-width
-                    min-width="290px"
-                    >
-                    <template v-slot:activator="{ on }">
-                        <v-text-field
-                        v-model="frmObj.reg_glucagon_fecha_vencimiento"
-                        label="Fecha de Caducidad de GLUCAGON"
-                        prepend-icon="event"
-                        readonly
-                        v-on="on"
-                        outline
-                        ></v-text-field>
-                    </template>
-                    <v-date-picker v-model="frmObj.reg_glucagon_fecha_vencimiento" no-title scrollable>
-                        <v-spacer></v-spacer>
-                        <v-btn flat color="primary" @click="reg_glucagon_fecha_vencimiento = false">Cancel</v-btn>
-                        <v-btn flat color="primary" @click="$refs.reg_glucagon_fecha_vencimiento.save(date)">OK</v-btn>
-                    </v-date-picker>
-                </v-menu>
+                <v-text-field 
+                    label="Presion Arterial"
+                    v-model="frmObj.reg_presion_arterial"
+                    required
+                    :disabled="action=='delete' || loading"
+                    type="text"
+                    outline
+                ></v-text-field> 
                 
                 <v-divider></v-divider> 
                 <v-card-text >
@@ -738,7 +686,7 @@
 
                 <v-divider></v-divider> 
                 <v-card-text >
-                  <h3>Datos TANNER</h3>
+                  <h3>TANNER - FUM - Menarca</h3>
                 </v-card-text>
 
                 <v-select
@@ -748,8 +696,15 @@
                     outline
                 ></v-select>
 
+                <v-select v-if="frmObj.reg_tanner=='SI'"
+                    v-model="frmObj.reg_tanner_escala"
+                    label="Escala"
+                    :items="escalaTanner"
+                    outline
+                ></v-select>
+
                 <v-menu
-                    v-if="frmObj.reg_tanner =='SI'"
+                    
                     ref="reg_fum"
                     :close-on-content-click="false"
                     :nudge-right="40"
@@ -777,7 +732,7 @@
                 </v-menu>
 
                 <v-text-field 
-                    v-if="frmObj.reg_tanner =='SI'"
+                    
                     label="Menarca"
                     v-model="frmObj.reg_menarca"
                     required
@@ -791,6 +746,45 @@
                 <v-card-text >
                   <h3>Datos Perfil Analítico</h3>
                 </v-card-text>
+
+                <v-text-field
+                    label="Valor de Hb1Ac (último control)"
+                    v-model="frmObj.reg_valor_hb1ac"
+                    required
+                    :disabled="action=='delete' || loading"
+                    type="number"
+                    outline
+                ></v-text-field>  
+
+                <v-menu
+                    ref="reg_fecha_hb1ac"
+                    :close-on-content-click="false"
+                    :nudge-right="40"
+                    lazy
+                    transition="scale-transition"
+                    offset-y
+                    full-width
+                    min-width="290px"
+                    >
+                    <template v-slot:activator="{ on }">
+                        <v-text-field
+                        v-model="frmObj.reg_fecha_hb1ac"
+                        label="Fecha último control Hb1Ac"
+                        prepend-icon="event"
+                        readonly
+                        v-on="on"
+                        outline
+                        ></v-text-field>
+                    </template>
+                    <v-date-picker v-model="frmObj.reg_fecha_hb1ac" no-title scrollable>
+                        <v-spacer></v-spacer>
+                        <v-btn flat color="primary" @click="reg_fecha_hb1ac = false">Cancel</v-btn>
+                        <v-btn flat color="primary" @click="$refs.reg_fecha_hb1ac.save(date)">OK</v-btn>
+                    </v-date-picker>
+                </v-menu>
+
+
+
 
                 <v-menu
                     ref="reg_fecha_perfil_analitico"
@@ -857,6 +851,36 @@
                     prepend-icon="image_aspect_ratio"
                 ></v-text-field> 
 
+                <v-text-field 
+                    label="Número de Hiperglicemias por Semana"
+                    v-model="frmObj.reg_hiperglicemias_semana"
+                    required
+                    :disabled="action=='delete' || loading"
+                    type="number"
+                    outline
+                    prepend-icon="image_aspect_ratio"
+                ></v-text-field> 
+
+                <v-text-field 
+                    label="Hiperglucemias Prandiales"
+                    v-model="frmObj.reg_hiperglucemia_prandiales"
+                    required
+                    :disabled="action=='delete' || loading"
+                    type="number"
+                    outline
+                    prepend-icon="image_aspect_ratio"
+                ></v-text-field>
+
+                <v-text-field 
+                    label="Hiperglucemias Postprandiales"
+                    v-model="frmObj.reg_hiperglucemia_postprandiales"
+                    required
+                    :disabled="action=='delete' || loading"
+                    type="number"
+                    outline
+                    prepend-icon="image_aspect_ratio"
+                ></v-text-field> 
+
                 <!-- <v-text-field 
                     label="Número de Hipoglucemias Graves por Semana"
                     v-model="frmObj.reg_hipoglucemias_semana"
@@ -871,18 +895,102 @@
                 <v-card-text >
                   <h3>Observaciones</h3>
                 </v-card-text>
+
+                <v-select
+                    v-model="frmObj.reg_controlado"
+                    :items="sinoItems"
+                    label="Paciente controlado?"
+                    outline
+                ></v-select>
+                
+                
                 <v-textarea
                     v-model="frmObj.reg_observaciones"
                     auto-grow
                     box
                     color="deep-purple"
-                    label="Observaciones Fondo de Ojo"
+                    label="Observaciones"
                     rows="2"
                     outline
                     prepend-icon="message"
                   ></v-textarea>
 
               </v-card>
+
+              <v-card v-if="frmObj.tipo=='REGISTRO EMERGENTE'" >
+                  
+                  <v-card-text >
+                      <h3>Registro Emergente</h3>
+                  </v-card-text>
+                
+                  <v-text-field
+                      label="Motivo de Consulta"
+                      v-model="frmObj.eme_motivo"
+                      type="text"
+                      required
+                      :disabled="action=='delete' || loading"
+                      outline
+                  ></v-text-field>
+                
+                <v-card-text >
+                  <h3>Datos Antropométricos</h3>
+                </v-card-text>
+
+                <v-text-field 
+                    label="Peso (KG)"
+                    v-model="frmObj.reg_peso"
+                    required
+                    :disabled="action=='delete' || loading"
+                    type="number"
+                    outline
+                ></v-text-field> 
+
+                <v-text-field 
+                    label="Talla (CM)"
+                    v-model="frmObj.reg_talla"
+                    required
+                    :disabled="action=='delete' || loading"
+                    type="number"
+                    outline
+                ></v-text-field> 
+
+                <v-text-field 
+                    label="IMC"
+                    v-model="frmObj.reg_imc"
+                    required
+                    :disabled="action=='delete' || loading"
+                    type="number"
+                    outline
+                ></v-text-field> 
+
+                <v-text-field 
+                    label="Perímetro Abdominal"
+                    v-model="frmObj.reg_perimetro_abdominal"
+                    required
+                    :disabled="action=='delete' || loading"
+                    type="number"
+                    outline
+                ></v-text-field> 
+                
+                <v-divider></v-divider> 
+                <v-card-text >
+                  <h3>Observaciones</h3>
+                </v-card-text>
+
+                <v-textarea
+                    v-model="frmObj.reg_observaciones"
+                    auto-grow
+                    box
+                    color="deep-purple"
+                    label="Observaciones"
+                    rows="2"
+                    outline
+                    prepend-icon="message"
+                  ></v-textarea>
+                
+              </v-card>
+              
+
               <v-flex xs12 justify-center v-show="loading">
                 <v-progress-linear
                   indeterminate
@@ -953,7 +1061,8 @@ export default {
       frmObj: {},
       date:null,
       sinoItems:["SI","NO", "NO APLICA"],
-      tipoItems:["ENTREGA DE KIT", "REGISTRO SUBSECUENTE"],
+      escalaTanner:["I","II","III","IV","V"],
+      tipoItems:["ENTREGA DE KIT", "REGISTRO SUBSECUENTE", "REGISTRO EMERGENTE"],
       tipoActividadItems:["AERÓBICA","ANAERÓBICA"],
       esquema_insulina:[]
     }
@@ -962,7 +1071,8 @@ export default {
   validations: {
     frmObj:{
       nombres:{required},
-      apellidos:{required},
+      apellido_paterno:{required},
+      apellido_materno:{required},
       identificacion:{required}
     }
   },

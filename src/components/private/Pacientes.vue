@@ -43,7 +43,7 @@
     >
         <template slot="items" slot-scope="props">
             <td>
-                <v-btn  @click="paciente(props.item.id)">{{ props.item.apellidos }}, {{ props.item.nombres }}</v-btn>
+                <v-btn  @click="paciente(props.item.id)">{{ props.item.apellido_paterno }}, {{ props.item.apellido_materno }}, {{ props.item.nombres }}</v-btn>
                 
             </td>
             <td class="text-xs-right">{{ props.item.identificacion }}</td>
@@ -85,7 +85,7 @@ import { setTimeout } from 'timers';
                 {
                     text: 'Paciente',
                     align: 'left',
-                    value: 'apellidos'
+                    value: 'apellido_paterno' 
                 },
                 { text: 'Cedula', value: 'identificacion' },
                 { text: 'Ciudad', value: 'ciudad_residencia' },
@@ -124,12 +124,13 @@ import { setTimeout } from 'timers';
                 var query=''
                 if(this.miEstablecimiento){
                     query=`query {
-                            pacientes( sort: "apellidos:asc", where: {
+                            pacientes( sort: "apellido_paterno:asc", where: {
                                 establecimiento: "${this.profile.establecimiento.id}"
                             }) {
                                 id
                                 nombres
-                                apellidos
+                                apellido_paterno
+                                apellido_materno
                                 establecimiento{
                                     id
                                     nombre
@@ -156,18 +157,22 @@ import { setTimeout } from 'timers';
                                 tutor
                                 comorbilidad
                                 complicaciones
+                                num_crisis
+                                ultima_crisis
                                 observaciones
                                 forma_debut_desc
+
                                
                             }
                             }
                         `
                 }else{
                     query=`query {
-                            pacientes( sort: "apellidos:asc") {
+                            pacientes( sort: "apellido_paterno:asc") {
                                     id
                                     nombres
-                                    apellidos
+                                    apellido_paterno
+                                    apellido_materno
                                     establecimiento{
                                         id
                                         nombre
@@ -194,6 +199,8 @@ import { setTimeout } from 'timers';
                                     tutor
                                     comorbilidad
                                     complicaciones
+                                    num_crisis
+                                    ultima_crisis
                                     observaciones
                                     forma_debut_desc
                                     user{

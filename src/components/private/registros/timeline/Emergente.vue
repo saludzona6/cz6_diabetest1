@@ -1,11 +1,11 @@
 <template>
         <v-timeline-item
-            color="blue"
+            color="red"
             small
             >
             <v-layout pt-3>
                 <v-flex xs3 pa-3>
-                    <h3>Entrega de Kit</h3>
+                    <h3>Emergente</h3>
                     <strong>{{formato(registro.created_at)}}</strong>
                     <v-spacer></v-spacer>
                     <v-btn :to="'/registro/'+registro.id" outline small fab color="indigo">
@@ -14,11 +14,11 @@
                 </v-flex>
                 <v-flex>
                     <div class="text-xs-center">
-                        <v-chip outline color="pink" > <strong>Tirillas Entregadas: {{registro.kit_tirillas}}</strong></v-chip>
+                        <v-chip outline color="pink" > <strong>Motivo: {{registro.eme_motivo}}</strong></v-chip>
                     </div> 
-                    <div  >Calibración Glucómetro: {{registro.kit_calibracion_glaucometro}}</div>
-                    <div  >Entrega Glucagón: {{registro.kit_entrega_glucagon}}</div>
-                    <div class="caption" v-if="registro.kit_entrega_glucagon=='SI'">Caducidad Glucagon: {{formato(registro.kit_fecha_caducidad_glaucon)}}</div>
+                    <div  >Peso: {{registro.reg_peso}} Kg.</div>
+                    <div  >Talla: {{registro.reg_talla}} cm.</div>
+                    <div  >IMC: {{registro.reg_imc}}</div>
                 </v-flex>
             </v-layout>
         </v-timeline-item>

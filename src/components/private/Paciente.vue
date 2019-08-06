@@ -23,7 +23,7 @@
               <v-btn icon to="/dashboard">
                 <v-icon>keyboard_backspace</v-icon>
               </v-btn>
-              <v-toolbar-title> {{paciente.apellidos}}, {{paciente.nombres}} (CI: {{paciente.identificacion}})</v-toolbar-title>
+              <v-toolbar-title> {{paciente.apellido_paterno}} {{paciente.apellido_materno}}, {{paciente.nombres}} (CI: {{paciente.identificacion}})</v-toolbar-title>
               <v-spacer></v-spacer>
               <v-btn icon @click="editPaciente(paciente)">
                 <v-icon>edit</v-icon>
@@ -55,12 +55,12 @@
                                 <h4 class=""><span class="category font-weight-regular mb-3">Residencia:</span>  {{ paciente.provincia_residencia.nombre }} / {{paciente.ciudad_residencia}}</h4>
                                 <h4 class=""><span class="category font-weight-regular mb-3">Dirección:</span> {{ paciente.direccion }}</h4>
                                 <h4 class=""><span class="category font-weight-regular mb-3">Teléfono Contacto:</span> {{ paciente.telefono }}</h4>
-                                <h4 class=""><span class="category font-weight-regular mb-3">Tutor:</span> {{ paciente.tutor }}</h4>
+                                <h4 class=""><span class="category font-weight-regular mb-3">Tutor legal/Padre/Madre:</span> {{ paciente.tutor }}</h4>
                                 <v-spacer></v-spacer>
                                 <br>
                                 <h3>Médico de Cabecera</h3>
                                 <v-divider></v-divider>
-                                <h4 class=""><span class="category font-weight-regular mb-3">Médico Cabecera:</span> {{ paciente.medico_cabecera }}</h4>
+                                <h4 class=""><span class="category font-weight-regular mb-3">Médico Tratante:</span> {{ paciente.medico_cabecera }}</h4>
                                 <h4 class=""><span class="category font-weight-regular mb-3">Contacto:</span> {{ paciente.contacto_medico_cabecera }}</h4>
 
                             </v-flex>
@@ -212,7 +212,8 @@ export default {
                             paciente(id: ${this.id})  {
                                 id
                                 nombres
-                                apellidos
+                                apellido_paterno
+                                apellido_materno
                                 establecimiento{
                                     id
                                     nombre
@@ -239,6 +240,8 @@ export default {
                                 tutor
                                 comorbilidad
                                 complicaciones
+                                num_crisis
+                                ultima_crisis
                                 observaciones
                                 forma_debut_desc
                                 user{
@@ -277,6 +280,7 @@ export default {
                                     reg_taller_educacion_fecha
                                     reg_taller_nutricion
                                     reg_taller_nutricion_fecha
+                                    reg_club_diabetes
                                     reg_control_podologia
                                     reg_control_podologia_fecha
                                     reg_actividad_fisica
@@ -285,6 +289,9 @@ export default {
                                     reg_actividad_duracion
                                     reg_num_glaucemias_dia
                                     reg_lipodistrofia
+                                    reg_lipohipertrofia
+                                    reg_lipohipertrofia_zona
+                                    reg_controlado
                                     reg_glucagon
                                     reg_glucagon_fecha_entrega
                                     reg_glucagon_fecha_vencimiento
@@ -292,7 +299,9 @@ export default {
                                     reg_talla
                                     reg_imc
                                     reg_perimetro_abdominal
+                                    eme_motivo
                                     reg_tanner
+                                    reg_tanner_escala
                                     reg_fum
                                     reg_menarca
                                     reg_perfilanaliticos{
@@ -300,6 +309,10 @@ export default {
                                         nombre
                                     }
                                     reg_hipoglucemias_semana
+                                    reg_hiperglicemias_semana
+                                    reg_hiperglucemia_prandiales
+                                    reg_hiperglucemia_postprandiales
+                                    reg_presion_arterial
                                     reg_observaciones
                                     kit_calibracion_glaucometro_fecha
                                     kit_calibracion_glaucometro
